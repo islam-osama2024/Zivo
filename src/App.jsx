@@ -11,6 +11,7 @@ import Categories from "./Components/Categories/Categories";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import Checkout from "./Components/Checkout/Checkout.jsx";
 import Brands from "./Components/Brands/Brands.jsx";
+import Wishlist from "./Components/Wishlist/Wishlist.jsx";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: <ProtectedRoute><Cart /></ProtectedRoute>,
+      },
+      {
+        path: "wishlist",
+        element: <ProtectedRoute><Wishlist /></ProtectedRoute>,
       },
       { path: "register", element: <Register /> },
       { path: "login", element: <Login /> },

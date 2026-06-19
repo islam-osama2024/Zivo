@@ -6,6 +6,7 @@ import App from "./App";
 import AuthContextProvider from "./Context/AuthContext";
 import CounterProvider from "./Context/CounterContext";
 import { CartProvider } from "./Context/CartContext";
+import { WishlistProvider } from "./Context/WishlistContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // ✅ Create Query Client with options
@@ -25,7 +26,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <QueryClientProvider client={queryClient}>
         <CounterProvider>
           <CartProvider>
-            <App />
+            <WishlistProvider>
+              <App />
+            </WishlistProvider>
           </CartProvider>
         </CounterProvider>
       </QueryClientProvider>

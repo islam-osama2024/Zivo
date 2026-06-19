@@ -5,6 +5,7 @@ import axios from "axios";
 import SimpleSlider from "../HomeSlider/HomeSlider.jsx";
 import Categories from "../Categories/Categories.jsx";
 import { useCart } from "../../Context/CartContext.jsx";
+import { useWishlist } from "../../Context/WishlistContext.jsx";
 import { toast, Toaster } from "react-hot-toast";
 import image1 from "../../assets/image/clotes.avif";
 import image2 from "../../assets/image/ele.avif";
@@ -57,9 +58,9 @@ export default function ProductsPage() {
   const [showSaleOnly, setShowSaleOnly] = useState(false);
   const [sortBy, setSortBy] = useState("default");
   const [modalProduct, setModalProduct] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
 
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [searchParams] = useSearchParams(); // ← جديد
   const navigate = useNavigate();           // ← جديد
   const brandFilter = searchParams.get("brand") || ""; // ← جديد
@@ -85,9 +86,6 @@ export default function ProductsPage() {
   const displayedProducts = showSaleOnly
     ? sortedProducts.filter((p) => p.discountPercentage > 0)
     : sortedProducts;
-
-  const toggleWishlist = (id) =>
-    setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
 
   const renderStars = (rating) =>
     Array.from({ length: 5 }, (_, i) => (
@@ -248,7 +246,7 @@ export default function ProductsPage() {
             ? renderSkeletons()
             : displayedProducts.map((product) => {
               const avgRating = product.reviews.reduce((sum, r) => sum + r.rating, 0) / (product.reviews.length || 1);
-              const inWishlist = wishlist.includes(product.id);
+              const inWishlist = isInWishlist(product.id);
 
               return gridView ? (
                 <div
@@ -263,7 +261,7 @@ export default function ProductsPage() {
                   </div>
                   <button
                     className={`absolute top-2 right-2 z-10 text-lg transition ${inWishlist ? "text-red-500" : "text-gray-300 hover:text-red-400"}`}
-                    onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
+                    onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
                   >
                     {inWishlist ? "♥" : "♡"}
                   </button>

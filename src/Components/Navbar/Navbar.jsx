@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../Context/AuthContext";
 import { CartContext } from "../../context/CartContext";
 
 // ← اللوجو مباشرة كـ component بدل صورة

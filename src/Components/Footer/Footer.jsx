@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../Context/AuthContext"; 
 import {
   FaFacebookF, FaLinkedinIn, FaWhatsapp, FaGoogle, FaInstagram,
   FaCcVisa, FaCcMastercard, FaCcPaypal, FaCcAmex, FaApplePay,

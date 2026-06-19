@@ -3,8 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi";
 import { AuthContext } from "../../Context/AuthContext";
-import { CartContext } from "../../context/CartContext";
-
+import { CartContext } from "../../Context/CartContext";
 // ← اللوجو مباشرة كـ component بدل صورة
 const ZivoLogo = ({ white = false }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="100" height="32" viewBox="0 0 120 36">

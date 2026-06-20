@@ -12,6 +12,7 @@ import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import Checkout from "./Components/Checkout/Checkout.jsx";
 import Brands from "./Components/Brands/Brands.jsx";
 import Wishlist from "./Components/Wishlist/Wishlist.jsx";
+import Profile from "./Components/Profile/Profile.jsx";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "wishlist",
         element: <ProtectedRoute><Wishlist /></ProtectedRoute>,
+      },
+      {
+        path: "profile",
+        element: <ProtectedRoute><Profile /></ProtectedRoute>,
       },
       { path: "register", element: <Register /> },
       { path: "login", element: <Login /> },

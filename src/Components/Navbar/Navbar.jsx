@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaUserCircle } from "react-icons/fa"; 
 import { FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi";
 import { AuthContext } from "../../Context/AuthContext";
 import { CartContext } from "../../Context/CartContext";
@@ -103,6 +103,16 @@ export default function Navbar() {
                                         {cartItems.length > 9 ? "9+" : cartItems.length}
                                     </span>
                                 )}
+                            </Link>
+                        )}
+                        {/* Profile */}
+                        {token && (
+                            <Link
+                                to="/profile"
+                                className="w-9 h-9 flex items-center justify-center rounded-full bg-white/20 dark:bg-gray-700 text-white hover:bg-white/30 dark:hover:bg-gray-600 hover:scale-110 transition-all duration-200"
+                                aria-label="Profile"
+                            >
+                                <FaUserCircle className="text-lg" />
                             </Link>
                         )}
 

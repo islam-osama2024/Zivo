@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../Context/CartContext.jsx"; // ← اضفنا ده
+import { useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext.jsx";
 
 const Checkout = () => {
     const navigate = useNavigate();
     const { cartItems, removeFromCart, increaseQty, decreaseQty } = useCart(); // ← من الـ Context
+    const { userEmail } = useContext(AuthContext);
     const [confirmedItems, setConfirmedItems] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -61,6 +64,25 @@ const Checkout = () => {
         setSubmitting(true);
         try {
             await axios.post("https://jsonplaceholder.typicode.com/posts", { ...form, cartItems, total });
+
+            // ← حفظ الطلب في localStorage لصفحة Profile
+            if (userEmail) {
+                const ordersKey = `orders_${userEmail.toLowerCase()}`;
+                try {
+                    const saved = localStorage.getItem(ordersKey);
+                    const existingOrders = saved ? JSON.parse(saved) : [];
+                    const newOrder = {
+                        id: Date.now(),
+                        date: new Date().toISOString(),
+                        items: cartItems,
+                        total,
+                    };
+                    localStorage.setItem(ordersKey, JSON.stringify([newOrder, ...existingOrders]));
+                } catch {
+                    /* تجاهل لو فيه مشكلة في الحفظ */
+                }
+            }
+
             setConfirmedItems([...cartItems]); // ← احفظهم قبل المسح
             cartItems.forEach((i) => removeFromCart(i.id)); // ← امسح من الـ Context
             setSuccess(true);

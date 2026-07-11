@@ -1,8 +1,10 @@
 import React from "react";
 import { useCart } from "../../Context/CartContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Cart() {
+  const { t } = useTranslation();
   const { cartItems, removeFromCart, increaseQty, decreaseQty } = useCart();
   const navigate = useNavigate();
 
@@ -14,31 +16,33 @@ export default function Cart() {
 
   /* ── Empty ── */
   if (cartItems.length === 0) return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
-      <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+    <div className="min-h-[70vh] bg-white dark:bg-gray-900 flex flex-col items-center justify-center text-center px-4">
+      <div className="w-32 h-32 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
         <span className="text-6xl">🛒</span>
       </div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
-      <p className="text-gray-400 text-sm mb-8 max-w-sm">
-        Looks like you haven't added anything yet. Start shopping and find something you love!
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t("cartEmpty")}</h2>
+      <p className="text-gray-400 dark:text-gray-500 text-sm mb-8 max-w-sm">
+        {t("cartEmptyMessage")}
       </p>
       <button
         onClick={() => navigate("/products")}
         className="px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full font-medium transition shadow-md"
       >
-        Start Shopping →
+        {t("startShopping")}
       </button>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">Shopping Cart</h1>
-          <p className="text-gray-400 text-sm mt-1">{cartItems.length} item{cartItems.length !== 1 ? "s" : ""} in your cart</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t("shoppingCart")}</h1>
+          <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
+            {t("itemsInCart", { count: cartItems.length })}
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -51,9 +55,9 @@ export default function Cart() {
               const hasDiscount = item.discountedPrice && item.discountedPrice < item.price;
 
               return (
-                <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4 flex gap-4 items-center hover:shadow-md transition">
+                <div key={item.id} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 flex gap-4 items-center hover:shadow-md transition">
                   {/* صورة */}
-                  <div className="w-24 h-24 bg-gray-50 rounded-xl flex-shrink-0 overflow-hidden border border-gray-100">
+                  <div className="w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-xl flex-shrink-0 overflow-hidden border border-gray-100 dark:border-gray-600">
                     <img
                       src={item.thumbnail || item.image}
                       alt={item.title}
@@ -64,19 +68,19 @@ export default function Cart() {
 
                   {/* معلومات */}
                   <div className="flex-1 min-w-0">
-                    <h2 className="font-semibold text-gray-800 text-sm line-clamp-1">{item.title}</h2>
-                    {item.brand && <p className="text-xs text-emerald-600 font-medium mt-0.5">{item.brand}</p>}
-                    <p className="text-xs text-gray-400 line-clamp-1 mt-0.5">{item.description}</p>
+                    <h2 className="font-semibold text-gray-800 dark:text-gray-100 text-sm line-clamp-1">{item.title}</h2>
+                    {item.brand && <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">{item.brand}</p>}
+                    <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-1 mt-0.5">{item.description}</p>
 
                     {/* السعر */}
                     <div className="flex items-center gap-2 mt-2">
                       {hasDiscount && (
-                        <span className="text-xs text-gray-300 line-through">${item.price.toFixed(2)}</span>
+                        <span className="text-xs text-gray-300 dark:text-gray-600 line-through">${item.price.toFixed(2)}</span>
                       )}
-                      <span className="text-sm font-bold text-gray-800">${itemPrice.toFixed(2)}</span>
+                      <span className="text-sm font-bold text-gray-800 dark:text-gray-100">${itemPrice.toFixed(2)}</span>
                       {hasDiscount && (
-                        <span className="text-[10px] bg-red-100 text-red-500 font-bold px-1.5 py-0.5 rounded-full">
-                          SALE
+                        <span className="text-[10px] bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 font-bold px-1.5 py-0.5 rounded-full">
+                          {t("sale")}
                         </span>
                       )}
                     </div>
@@ -85,24 +89,24 @@ export default function Cart() {
                     <div className="flex items-center gap-2 mt-3">
                       <button
                         onClick={() => decreaseQty(item.id)}
-                        className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-sm font-bold transition"
+                        className="w-7 h-7 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full flex items-center justify-center text-sm font-bold dark:text-gray-100 transition"
                       >−</button>
-                      <span className="text-sm font-semibold w-6 text-center">{item.quantity}</span>
+                      <span className="text-sm font-semibold w-6 text-center dark:text-gray-100">{item.quantity}</span>
                       <button
                         onClick={() => increaseQty(item.id)}
-                        className="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-sm font-bold transition"
+                        className="w-7 h-7 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full flex items-center justify-center text-sm font-bold dark:text-gray-100 transition"
                       >+</button>
                     </div>
                   </div>
 
                   {/* السعر الكلي + Remove */}
                   <div className="flex flex-col items-end gap-3 flex-shrink-0">
-                    <p className="font-bold text-gray-800">${itemTotal.toFixed(2)}</p>
+                    <p className="font-bold text-gray-800 dark:text-gray-100">${itemTotal.toFixed(2)}</p>
                     <button
                       onClick={() => removeFromCart(item.id)}
-                      className="text-xs text-red-400 hover:text-red-600 transition flex items-center gap-1"
+                      className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-400 transition flex items-center gap-1"
                     >
-                      🗑 Remove
+                      🗑 {t("remove")}
                     </button>
                   </div>
                 </div>
@@ -112,22 +116,22 @@ export default function Cart() {
             {/* Continue Shopping */}
             <button
               onClick={() => navigate("/products")}
-              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1 mt-2 transition"
+              className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium flex items-center gap-1 mt-2 transition"
             >
-              ← Continue Shopping
+              {t("continueShopping")}
             </button>
           </div>
 
           {/* ── Order Summary ── */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 sticky top-6">
-              <h2 className="text-base font-bold text-gray-800 mb-5">Order Summary</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 sticky top-6">
+              <h2 className="text-base font-bold text-gray-800 dark:text-gray-100 mb-5">{t("orderSummary")}</h2>
 
               {/* Mini product list */}
               <div className="space-y-3 mb-5 max-h-48 overflow-y-auto">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
+                    <div className="w-10 h-10 bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 dark:border-gray-600">
                       <img
                         src={item.thumbnail || item.image}
                         alt={item.title}
@@ -136,35 +140,35 @@ export default function Cart() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-600 line-clamp-1">{item.title}</p>
-                      <p className="text-[11px] text-gray-400">x{item.quantity}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-1">{item.title}</p>
+                      <p className="text-[11px] text-gray-400 dark:text-gray-500">x{item.quantity}</p>
                     </div>
-                    <span className="text-xs font-semibold text-gray-700">
+                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
                       ${((item.discountedPrice ?? item.price) * item.quantity).toFixed(2)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-gray-100 pt-4 space-y-3">
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span>Subtotal</span>
+              <div className="border-t border-gray-100 dark:border-gray-700 pt-4 space-y-3">
+                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <span>{t("subtotal")}</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span>Shipping</span>
-                  <span className={shipping === 0 ? "text-green-600 font-medium" : ""}>
-                    {shipping === 0 ? "FREE 🎉" : `$${shipping}`}
+                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <span>{t("shipping")}</span>
+                  <span className={shipping === 0 ? "text-green-600 dark:text-green-400 font-medium" : ""}>
+                    {shipping === 0 ? t("free") : `$${shipping}`}
                   </span>
                 </div>
                 {shipping > 0 && (
-                  <p className="text-[11px] text-gray-400 bg-yellow-50 border border-yellow-100 rounded-lg px-3 py-2">
-                    💡 Add ${(200 - subtotal).toFixed(2)} more for free shipping!
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800 rounded-lg px-3 py-2">
+                    💡 {t("freeShippingMessage", { amount: (200 - subtotal).toFixed(2) })}
                   </p>
                 )}
-                <div className="flex justify-between font-bold text-gray-800 text-base pt-2 border-t border-gray-100">
-                  <span>Total</span>
-                  <span className="text-green-600">${total.toFixed(2)}</span>
+                <div className="flex justify-between font-bold text-gray-800 dark:text-gray-100 text-base pt-2 border-t border-gray-100 dark:border-gray-700">
+                  <span>{t("total")}</span>
+                  <span className="text-green-600 dark:text-green-400">${total.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -172,13 +176,13 @@ export default function Cart() {
                 onClick={() => navigate("/checkout")}
                 className="w-full mt-5 bg-green-500 hover:bg-green-600 text-white py-3 rounded-full font-semibold transition shadow-md hover:shadow-lg text-sm"
               >
-                Proceed to Checkout →
+                {t("proceedToCheckout")}
               </button>
 
               {/* Secure badge */}
-              <div className="flex items-center justify-center gap-1.5 mt-4 text-gray-400 text-xs">
+              <div className="flex items-center justify-center gap-1.5 mt-4 text-gray-400 dark:text-gray-500 text-xs">
                 <span>🔒</span>
-                <span>Secure & encrypted checkout</span>
+                <span>{t("secureCheckout")}</span>
               </div>
             </div>
           </div>

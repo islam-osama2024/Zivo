@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../Context/AuthContext"; 
+import { useTranslation } from "react-i18next";
+import { AuthContext } from "../../Context/AuthContext";
 import {
   FaFacebookF, FaLinkedinIn, FaWhatsapp, FaGoogle, FaInstagram,
   FaCcVisa, FaCcMastercard, FaCcPaypal, FaCcAmex, FaApplePay,
@@ -36,30 +37,6 @@ const paymentMethods = [
   { label: "Apple Pay", icon: FaApplePay, color: "text-gray-100" },
 ];
 
-// ── روابط الفوتر ──────────────────────────────────────────────
-const navLinks = [
-  { label: "Products", to: "/products" },
-  { label: "Categories", to: "/categories" },
-  { label: "Brands", to: "/brands" },
-  { label: "Cart", to: "/cart" },
-  { label: "Register", to: "/register" },
-  { label: "Login", to: "/login" },
-];
-
-const companyLinks = [
-  { label: "About", to: "/about" },
-  { label: "Features", to: "/features" },
-  { label: "Works", to: "/works" },
-  { label: "Career", to: "/career" },
-];
-
-const helpLinks = [
-  { label: "Customer Support", to: "/support" },
-  { label: "Delivery Details", to: "/delivery" },
-  { label: "Terms & Conditions", to: "/terms" },
-  { label: "Privacy Policy", to: "/privacy" },
-];
-
 // ── هوك: كشف ظهور العنصر في الشاشة ──────────────────────────
 function useInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -79,6 +56,7 @@ function useInView(threshold = 0.15) {
 
 // ── مكوّن قائمة الروابط ───────────────────────────────────────
 function FooterLinkList({ title, links, visible, delay = 0 }) {
+  const { t } = useTranslation();
   return (
     <div
       style={{
@@ -91,10 +69,10 @@ function FooterLinkList({ title, links, visible, delay = 0 }) {
         {title}
       </h3>
       <ul className="mt-6 space-y-3">
-        {links.map(({ label, to }) => (
+        {links.map(({ key, to }) => (
           <li key={to}>
             <Link to={to} className="hover:text-emerald-400 transition">
-              {label}
+              {t(key)}
             </Link>
           </li>
         ))}
@@ -105,6 +83,7 @@ function FooterLinkList({ title, links, visible, delay = 0 }) {
 
 // ── المكوّن الرئيسي ───────────────────────────────────────────
 export default function Footer() {
+  const { t } = useTranslation();
   const { userEmail } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
@@ -127,6 +106,30 @@ export default function Footer() {
 
   const [footerRef, footerVisible] = useInView();
 
+  // ── روابط الفوتر (جوه الكومبوننت عشان تترجم مع تغيير اللغة) ──
+  const navLinks = [
+    { key: "products", to: "/products" },
+    { key: "categories", to: "/categories" },
+    { key: "brands", to: "/brands" },
+    { key: "cart", to: "/cart" },
+    { key: "register", to: "/register" },
+    { key: "login", to: "/login" },
+  ];
+
+  const companyLinks = [
+    { key: "about", to: "/about" },
+    { key: "features", to: "/features" },
+    { key: "works", to: "/works" },
+    { key: "career", to: "/career" },
+  ];
+
+  const helpLinks = [
+    { key: "customerSupport", to: "/support" },
+    { key: "deliveryDetails", to: "/delivery" },
+    { key: "termsConditions", to: "/terms" },
+    { key: "privacyPolicyLink", to: "/privacy" },
+  ];
+
   // ── Back to Top ───────────────────────────────────────────────
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 300);
@@ -141,10 +144,10 @@ export default function Footer() {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    if (!email.trim()) { setError("من فضلك أدخل بريدك الإلكتروني."); return; }
-    if (!isValidEmail(email)) { setError("البريد الإلكتروني غير صحيح."); return; }
+    if (!email.trim()) { setError(t("errorEnterEmail")); return; }
+    if (!isValidEmail(email)) { setError(t("errorInvalidEmailFooter")); return; }
     if (subscribedEmails.has(email.toLowerCase())) {
-      setError("هذا البريد الإلكتروني مشترك بالفعل.");
+      setError(t("errorAlreadySubscribed"));
       return;
     }
 
@@ -190,8 +193,7 @@ export default function Footer() {
             >
               <h2 className="text-3xl font-extrabold text-white">ZIVO</h2>
               <p className="mt-4 text-gray-300 leading-relaxed">
-                اكتشف عالمًا مليئًا بأفضل المنتجات والخدمات الإلكترونية، تسوق
-                بسهولة، استمتع بالراحة، واحصل على كل ما تحلم به في مكان واحد.
+                {t("footerDescription")}
               </p>
               <div className="flex items-center mt-6 space-x-3">
                 {socials.map(({ label, icon: Icon, href, className, rotate }) => (
@@ -209,9 +211,9 @@ export default function Footer() {
               </div>
             </div>
 
-            <FooterLinkList title="Navigation" links={navLinks} visible={footerVisible} delay={100} />
-            <FooterLinkList title="Company" links={companyLinks} visible={footerVisible} delay={200} />
-            <FooterLinkList title="Help" links={helpLinks} visible={footerVisible} delay={300} />
+            <FooterLinkList title={t("navigation")} links={navLinks} visible={footerVisible} delay={100} />
+            <FooterLinkList title={t("company")} links={companyLinks} visible={footerVisible} delay={200} />
+            <FooterLinkList title={t("help")} links={helpLinks} visible={footerVisible} delay={300} />
 
             {/* النشرة البريدية */}
             <div
@@ -223,19 +225,19 @@ export default function Footer() {
               }}
             >
               <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
-                Subscribe to newsletter
+                {t("subscribeNewsletter")}
               </h3>
 
               {subscribed ? (
                 <div className="mt-6">
-                  <p className="text-emerald-400 font-medium">✅ تم الاشتراك بنجاح! شكراً لك.</p>
+                  <p className="text-emerald-400 font-medium">✅ {t("subscribedSuccess")}</p>
                   <p className="text-gray-500 text-xs mt-1">{userEmail}</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="mt-6 flex flex-col gap-3" noValidate>
                   {justSubscribed && (
                     <p className="text-emerald-400 text-sm font-medium animate-pulse">
-                      ✅ تم الاشتراك بنجاح! شكراً لك.
+                      ✅ {t("subscribedSuccess")}
                     </p>
                   )}
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -243,7 +245,7 @@ export default function Footer() {
                       type="email"
                       value={email}
                       onChange={(e) => { setEmail(e.target.value); setError(""); }}
-                      placeholder="Enter your email"
+                      placeholder={t("enterEmail")}
                       className={`w-full p-3 rounded-md border ${error ? "border-red-500" : "border-gray-700"
                         } bg-gray-900 text-white focus:outline-none focus:border-emerald-400 caret-emerald-400`}
                     />
@@ -251,7 +253,7 @@ export default function Footer() {
                       type="submit"
                       className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md shadow-lg transition-all transform hover:scale-105 whitespace-nowrap"
                     >
-                      Subscribe
+                      {t("subscribe")}
                     </button>
                   </div>
                   {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -270,7 +272,7 @@ export default function Footer() {
             }}
           >
             <p className="text-sm text-gray-400 mb-4 text-center uppercase tracking-wider font-semibold">
-              Secure Payment Methods
+              {t("securePaymentMethods")}
             </p>
             <div className="flex justify-center items-center gap-6 flex-wrap">
               {paymentMethods.map(({ label, icon: Icon, color }) => (
@@ -285,7 +287,7 @@ export default function Footer() {
 
           <hr className="mt-8 border-gray-700" />
           <p className="mt-6 text-center text-gray-400 text-sm">
-            © {new Date().getFullYear()} FRESH CART. All Rights Reserved.
+            © {new Date().getFullYear()} FRESH CART. {t("allRightsReserved")}.
           </p>
         </div>
       </footer>

@@ -1,11 +1,13 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AuthContext } from "../../Context/AuthContext";
 import { useCart } from "../../Context/CartContext";
 import { useWishlist } from "../../Context/WishlistContext";
 import { FiMail, FiShoppingBag, FiHeart, FiLogOut, FiCamera, FiPackage } from "react-icons/fi";
 
 export default function Profile() {
+    const { t } = useTranslation();
     const { userEmail, logout } = useContext(AuthContext);
     const { cartItems } = useCart();
     const { wishlistItems } = useWishlist();
@@ -103,10 +105,10 @@ export default function Profile() {
                         />
                     </div>
 
-                    <h1 className="text-xl font-bold text-gray-800 dark:text-white">{userEmail || "Guest"}</h1>
+                    <h1 className="text-xl font-bold text-gray-800 dark:text-white">{userEmail || t("guest")}</h1>
                     <p className="text-gray-400 dark:text-gray-500 text-sm mt-1 flex items-center justify-center gap-1.5">
                         <FiMail className="text-sm" />
-                        {userEmail || "No email available"}
+                        {userEmail || t("noEmailAvailable")}
                     </p>
                 </div>
 
@@ -118,7 +120,7 @@ export default function Profile() {
                     >
                         <FiShoppingBag className="text-2xl text-emerald-500 mx-auto mb-2" />
                         <p className="text-2xl font-bold text-gray-800 dark:text-white">{cartItems.length}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Items in Cart</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t("itemsInCartStat")}</p>
                     </div>
 
                     <div
@@ -127,21 +129,21 @@ export default function Profile() {
                     >
                         <FiHeart className="text-2xl text-red-400 mx-auto mb-2" />
                         <p className="text-2xl font-bold text-gray-800 dark:text-white">{wishlistItems.length}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Wishlist Items</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t("wishlistItemsStat")}</p>
                     </div>
                 </div>
 
                 {/* Account Info */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 mb-6">
-                    <h2 className="text-sm font-bold text-gray-700 dark:text-gray-200 mb-4">Account Information</h2>
+                    <h2 className="text-sm font-bold text-gray-700 dark:text-gray-200 mb-4">{t("accountInformation")}</h2>
                     <div className="space-y-3">
                         <div className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-700">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">Email</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">{t("emailAddress")}</span>
                             <span className="text-sm font-medium text-gray-800 dark:text-white">{userEmail || "—"}</span>
                         </div>
                         <div className="flex justify-between items-center py-2">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">Member Status</span>
-                            <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/40 px-3 py-1 rounded-full">Active</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">{t("memberStatus")}</span>
+                            <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/40 px-3 py-1 rounded-full">{t("active")}</span>
                         </div>
                     </div>
                 </div>
@@ -150,18 +152,18 @@ export default function Profile() {
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 mb-6">
                     <h2 className="text-sm font-bold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2">
                         <FiPackage className="text-emerald-500" />
-                        Order History
+                        {t("orderHistory")}
                     </h2>
 
                     {orders.length === 0 ? (
                         <div className="text-center py-8">
                             <p className="text-3xl mb-2">📦</p>
-                            <p className="text-sm text-gray-400 dark:text-gray-500">No orders yet</p>
+                            <p className="text-sm text-gray-400 dark:text-gray-500">{t("noOrdersYet")}</p>
                             <button
                                 onClick={() => navigate("/products")}
                                 className="mt-3 text-sm text-emerald-600 dark:text-emerald-400 font-medium hover:underline"
                             >
-                                Start Shopping →
+                                {t("startShoppingBtn")}
                             </button>
                         </div>
                     ) : (
@@ -177,7 +179,7 @@ export default function Profile() {
                                                 {order.date ? new Date(order.date).toLocaleDateString() : "—"}
                                             </p>
                                             <p className="text-sm font-semibold text-gray-800 dark:text-white mt-0.5">
-                                                {order.items?.length || 0} item{order.items?.length !== 1 ? "s" : ""}
+                                                {t("orderItemsCount", { count: order.items?.length || 0 })}
                                             </p>
                                         </div>
                                         <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
@@ -201,7 +203,7 @@ export default function Profile() {
                     className="w-full flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-red-200 dark:border-red-900/50 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 py-3 rounded-2xl font-medium transition"
                 >
                     <FiLogOut />
-                    Logout
+                    {t("logout")}
                 </button>
             </div>
         </div>

@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 // ← لوجو Zivo مباشرة بدل صورة
 const ZivoLogo = ({ white = false }) => (
@@ -23,14 +24,6 @@ const ZivoLogo = ({ white = false }) => (
   </svg>
 );
 
-const fieldConfig = [
-  { name: "name", label: "Full Name", placeholder: "Islam Ahmed", icon: FiUser, type: "text" },
-  { name: "email", label: "Email address", placeholder: "islam@example.com", icon: FiMail, type: "email" },
-  { name: "phone", label: "Phone number", placeholder: "01xxxxxxxxx", icon: FiPhone, type: "tel" },
-  { name: "password", label: "Password", placeholder: "••••••••", icon: FiLock, type: "password" },
-  { name: "rePassword", label: "Confirm Password", placeholder: "••••••••", icon: FiLock, type: "password" },
-];
-
 function getStrength(pw) {
   let s = 0;
   if (pw.length >= 8) s++;
@@ -40,28 +33,45 @@ function getStrength(pw) {
   return s;
 }
 
-const strengthConfig = [
-  { label: "Weak", color: "bg-red-500", width: "w-1/4" },
-  { label: "Fair", color: "bg-orange-400", width: "w-2/4" },
-  { label: "Good", color: "bg-blue-500", width: "w-3/4" },
-  { label: "Strong", color: "bg-green-500", width: "w-full" },
-];
-
 export default function Register() {
+  const { t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // ← نقلناهم جوه الكومبوننت عشان يستخدموا t() ويتحدثوا مع تغيير اللغة
+  const fieldConfig = [
+    { name: "name", label: t("fullName"), placeholder: "Islam Ahmed", icon: FiUser, type: "text" },
+    { name: "email", label: t("emailAddress"), placeholder: "islam@example.com", icon: FiMail, type: "email" },
+    { name: "phone", label: t("phoneNumber"), placeholder: "01xxxxxxxxx", icon: FiPhone, type: "tel" },
+    { name: "password", label: t("password"), placeholder: "••••••••", icon: FiLock, type: "password" },
+    { name: "rePassword", label: t("confirmPassword"), placeholder: "••••••••", icon: FiLock, type: "password" },
+  ];
+
+  const strengthConfig = [
+    { label: t("strengthWeak"), color: "bg-red-500", width: "w-1/4" },
+    { label: t("strengthFair"), color: "bg-orange-400", width: "w-2/4" },
+    { label: t("strengthGood"), color: "bg-blue-500", width: "w-3/4" },
+    { label: t("strengthStrong"), color: "bg-green-500", width: "w-full" },
+  ];
+
+  const features = [
+    { icon: "🎁", text: t("feature1") },
+    { icon: "📦", text: t("feature2") },
+    { icon: "💳", text: t("feature3") },
+    { icon: "⭐", text: t("feature4") },
+  ];
+
   const formik = useFormik({
     initialValues: { name: "", email: "", password: "", rePassword: "", phone: "" },
     validationSchema: Yup.object({
-      name: Yup.string().matches(/^[a-zA-Z\s]+$/, "Letters only").required("Required"),
-      email: Yup.string().email("Invalid email").required("Required"),
-      phone: Yup.string().matches(/^(20)?01[0125][0-9]{8}$/, "Invalid phone").required("Required"),
-      password: Yup.string().min(8, "Min 8 characters").required("Required"),
-      rePassword: Yup.string().oneOf([Yup.ref("password")], "Passwords don't match").required("Required"),
+      name: Yup.string().matches(/^[a-zA-Z\s]+$/, t("errorLettersOnly")).required(t("errorRequired")),
+      email: Yup.string().email(t("errorInvalidEmail")).required(t("errorRequired")),
+      phone: Yup.string().matches(/^(20)?01[0125][0-9]{8}$/, t("errorInvalidPhone")).required(t("errorRequired")),
+      password: Yup.string().min(8, t("errorMinChars")).required(t("errorRequired")),
+      rePassword: Yup.string().oneOf([Yup.ref("password")], t("errorPasswordsMatch")).required(t("errorRequired")),
     }),
     onSubmit: async (values) => {
       setErrorMessage(null);
@@ -77,8 +87,8 @@ export default function Register() {
       } catch (err) {
         setErrorMessage(
           err.response?.data?.message === "Account already exists"
-            ? "This email is already registered."
-            : err.response?.data?.message || "Something went wrong"
+            ? t("errorEmailExists")
+            : err.response?.data?.message || t("errorGeneric")
         );
       } finally {
         setLoading(false);
@@ -88,8 +98,8 @@ export default function Register() {
 
   useEffect(() => {
     if (errorMessage) {
-      const t = setTimeout(() => setErrorMessage(null), 3000);
-      return () => clearTimeout(t);
+      const timeout = setTimeout(() => setErrorMessage(null), 3000);
+      return () => clearTimeout(timeout);
     }
   }, [errorMessage]);
 
@@ -97,15 +107,15 @@ export default function Register() {
   const strengthInfo = strengthConfig[strength - 1];
 
   const getInputClass = (field) => {
-    if (!formik.touched[field]) return "border-gray-200 bg-gray-50 focus:bg-white";
+    if (!formik.touched[field]) return "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800";
     return formik.errors[field]
-      ? "border-red-400 bg-red-50 focus:bg-white"
-      : "border-green-400 bg-green-50 focus:bg-white";
+      ? "border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20 focus:bg-white dark:focus:bg-gray-800"
+      : "border-green-400 dark:border-green-500 bg-green-50 dark:bg-green-900/20 focus:bg-white dark:focus:bg-gray-800";
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl grid md:grid-cols-2 bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl grid md:grid-cols-2 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
 
         {/* ── الجانب الأيمن — ديكور ── */}
         <div className="hidden md:flex flex-col items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-600 p-10 text-white relative overflow-hidden order-last">
@@ -118,17 +128,12 @@ export default function Register() {
               <ZivoLogo white />
             </div>
             <h2 className="text-3xl font-extrabold mb-3 leading-tight">
-              Join Zivo! 🎉
+              {t("joinZivo")}
             </h2>
             <p className="text-emerald-100 text-sm leading-relaxed mb-8">
-              Create your account and start shopping from thousands of products today.
+              {t("joinZivoSubtitle")}
             </p>
-            {[
-              { icon: "🎁", text: "Exclusive deals for members" },
-              { icon: "📦", text: "Track your orders easily" },
-              { icon: "💳", text: "Safe & secure checkout" },
-              { icon: "⭐", text: "Earn rewards on every purchase" },
-            ].map(({ icon, text }) => (
+            {features.map(({ icon, text }) => (
               <div key={text} className="flex items-center gap-3 mb-3 text-left">
                 <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm flex-shrink-0">{icon}</div>
                 <span className="text-sm text-emerald-100">{text}</span>
@@ -145,23 +150,23 @@ export default function Register() {
             <ZivoLogo />
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">Create account</h1>
-          <p className="text-gray-400 text-sm mb-6">
-            Already have an account?{" "}
-            <Link to="/login" className="text-emerald-600 font-medium hover:underline">Sign in</Link>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">{t("createAccount")}</h1>
+          <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
+            {t("alreadyHaveAccount")}{" "}
+            <Link to="/login" className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">{t("signIn")}</Link>
           </p>
 
           {/* Success */}
           {successMessage && (
-            <div className="mb-5 flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl">
+            <div className="mb-5 flex items-center gap-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm px-4 py-3 rounded-xl">
               <span>🎉</span>
-              <span>Account created! Redirecting...</span>
+              <span>{t("accountCreatedSuccess")}</span>
             </div>
           )}
 
           {/* Error */}
           {errorMessage && !successMessage && (
-            <div className="mb-5 flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
+            <div className="mb-5 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
               <span>⚠️</span>
               <span>{errorMessage}</span>
             </div>
@@ -174,9 +179,9 @@ export default function Register() {
 
               return (
                 <div key={name}>
-                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">{label}</label>
+                  <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">{label}</label>
                   <div className="relative">
-                    <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+                    <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-sm" />
                     <input
                       type={inputType}
                       name={name}
@@ -184,7 +189,7 @@ export default function Register() {
                       onChange={(e) => { formik.handleChange(e); setErrorMessage(null); }}
                       onBlur={formik.handleBlur}
                       placeholder={placeholder}
-                      className={`w-full pl-10 pr-${isPassword ? "11" : "4"} py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition ${getInputClass(name)}`}
+                      className={`w-full pl-10 pr-${isPassword ? "11" : "4"} py-2.5 border rounded-xl text-sm dark:text-white dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition ${getInputClass(name)}`}
                     />
 
                     {/* Show/Hide password */}
@@ -192,7 +197,7 @@ export default function Register() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition"
                       >
                         {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
                       </button>
@@ -200,19 +205,19 @@ export default function Register() {
 
                     {/* Valid ✓ */}
                     {formik.touched[name] && !formik.errors[name] && !isPassword && (
-                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 text-sm">✓</span>
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-green-500 dark:text-green-400 text-sm">✓</span>
                     )}
                   </div>
 
                   {/* Password strength */}
                   {name === "password" && formik.values.password && (
                     <div className="mt-2">
-                      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div className={`h-full rounded-full transition-all duration-300 ${strengthInfo?.color || ""} ${strengthInfo?.width || "w-0"}`} />
                       </div>
-                      <p className={`text-xs mt-1 font-medium ${strength <= 1 ? "text-red-500" :
-                          strength === 2 ? "text-orange-400" :
-                            strength === 3 ? "text-blue-500" : "text-green-500"
+                      <p className={`text-xs mt-1 font-medium ${strength <= 1 ? "text-red-500 dark:text-red-400" :
+                        strength === 2 ? "text-orange-400" :
+                          strength === 3 ? "text-blue-500 dark:text-blue-400" : "text-green-500 dark:text-green-400"
                         }`}>
                         {strengthInfo?.label || ""}
                       </p>
@@ -221,7 +226,7 @@ export default function Register() {
 
                   {/* Error message */}
                   {formik.touched[name] && formik.errors[name] && (
-                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-1 flex items-center gap-1">
                       <span>⚠</span> {formik.errors[name]}
                     </p>
                   )}
@@ -234,25 +239,25 @@ export default function Register() {
               type="submit"
               disabled={loading || strength < 3}
               className={`w-full py-3 rounded-xl font-semibold text-white text-sm transition-all duration-200 flex items-center justify-center gap-2 mt-2 ${loading || strength < 3
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-emerald-500 hover:bg-emerald-600 shadow-md hover:shadow-emerald-200 hover:shadow-lg"
+                ? "bg-gray-300 dark:bg-gray-600 cursor-not-allowed"
+                : "bg-emerald-500 hover:bg-emerald-600 shadow-md hover:shadow-emerald-200 dark:hover:shadow-emerald-900 hover:shadow-lg"
                 }`}
             >
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Creating account...
+                  {t("creatingAccount")}
                 </>
-              ) : "Create account →"}
+              ) : t("createAccountBtn")}
             </button>
           </form>
 
           {/* Terms */}
-          <p className="text-center text-xs text-gray-400 mt-5">
-            By registering, you agree to our{" "}
-            <span className="text-emerald-600 hover:underline cursor-pointer">Terms</span>
-            {" "}and{" "}
-            <span className="text-emerald-600 hover:underline cursor-pointer">Privacy Policy</span>
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-5">
+            {t("termsAgreement")}{" "}
+            <span className="text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">{t("terms")}</span>
+            {" "}{t("and")}{" "}
+            <span className="text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">{t("privacyPolicy")}</span>
           </p>
         </div>
       </div>

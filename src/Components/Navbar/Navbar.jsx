@@ -1,7 +1,8 @@
 import { useContext, useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaUserCircle } from "react-icons/fa"; 
+import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { AuthContext } from "../../Context/AuthContext";
 import { CartContext } from "../../Context/CartContext";
 // ← اللوجو مباشرة كـ component بدل صورة
@@ -23,10 +24,10 @@ const ZivoLogo = ({ white = false }) => (
 );
 
 const navLinks = [
-    { label: "Products", to: "/products" },
-    { label: "Categories", to: "/categories" },
-    { label: "Brands", to: "/brands" },
-    { label: "Wishlist", to: "/wishlist" },
+    { key: "products", to: "/products" },
+    { key: "categories", to: "/categories" },
+    { key: "brands", to: "/brands" },
+    { key: "wishlist", to: "/wishlist" },
 ];
 
 export default function Navbar() {
@@ -38,6 +39,11 @@ export default function Navbar() {
     const { token, logout } = useContext(AuthContext);
     const { cartItems } = useContext(CartContext);
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
+
+    function changeLanguage(lng) {
+        i18n.changeLanguage(lng);
+    }
 
     useEffect(() => {
         document.documentElement.classList.toggle("dark", darkMode);
@@ -60,7 +66,7 @@ export default function Navbar() {
                     {/* روابط Desktop */}
                     {token && (
                         <ul className="hidden md:flex items-center gap-1">
-                            {navLinks.map(({ label, to }) => (
+                            {navLinks.map(({ key, to }) => (
                                 <li key={to}>
                                     <NavLink
                                         to={to}
@@ -71,7 +77,7 @@ export default function Navbar() {
                                             }`
                                         }
                                     >
-                                        {label}
+                                        {t(key)}
                                     </NavLink>
                                 </li>
                             ))}
@@ -80,6 +86,15 @@ export default function Navbar() {
 
                     {/* الجانب الأيمن */}
                     <div className="flex items-center gap-3">
+
+                        {/* Language toggle */}
+                        <button
+                            onClick={() => changeLanguage(i18n.language === "ar" ? "en" : "ar")}
+                            aria-label="Toggle language"
+                            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/20 dark:bg-gray-700 text-white text-xs font-bold hover:bg-white/30 dark:hover:bg-gray-600 hover:scale-110 transition-all duration-200"
+                        >
+                            {i18n.language === "ar" ? "EN" : "AR"}
+                        </button>
 
                         {/* Dark / Light toggle */}
                         <button
@@ -124,13 +139,13 @@ export default function Navbar() {
                                         to="/register"
                                         className="px-4 py-1.5 text-sm font-medium text-white/90 hover:text-white dark:text-gray-300 dark:hover:text-white transition"
                                     >
-                                        Register
+                                        {t("register")}
                                     </NavLink>
                                     <NavLink
                                         to="/login"
                                         className="px-4 py-1.5 text-sm font-medium bg-white text-emerald-600 rounded-lg hover:bg-emerald-50 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-600 transition"
                                     >
-                                        Login
+                                        {t("login")}
                                     </NavLink>
                                 </>
                             ) : (
@@ -138,7 +153,7 @@ export default function Navbar() {
                                     onClick={handleLogout}
                                     className="px-4 py-1.5 text-sm font-medium bg-white/20 text-white rounded-lg hover:bg-white/30 dark:bg-gray-700 dark:hover:bg-gray-600 transition"
                                 >
-                                    Logout
+                                    {t("logout")}
                                 </button>
                             )}
                         </div>
@@ -158,7 +173,7 @@ export default function Navbar() {
                 <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-96 pb-4" : "max-h-0"}`}>
                     {token && (
                         <ul className="flex flex-col gap-1 pt-2">
-                            {navLinks.map(({ label, to }) => (
+                            {navLinks.map(({ key, to }) => (
                                 <li key={to}>
                                     <NavLink
                                         to={to}
@@ -170,7 +185,7 @@ export default function Navbar() {
                                             }`
                                         }
                                     >
-                                        {label}
+                                        {t(key)}
                                     </NavLink>
                                 </li>
                             ))}
@@ -185,14 +200,14 @@ export default function Navbar() {
                                     onClick={handleNavLinkClick}
                                     className="block px-4 py-2 text-sm text-white/90 hover:text-white dark:text-gray-300 rounded-lg hover:bg-white/20 transition"
                                 >
-                                    Register
+                                    {t("register")}
                                 </NavLink>
                                 <NavLink
                                     to="/login"
                                     onClick={handleNavLinkClick}
                                     className="block px-4 py-2 text-sm font-medium bg-white text-emerald-600 rounded-lg hover:bg-emerald-50 dark:bg-emerald-500 dark:text-white transition text-center"
                                 >
-                                    Login
+                                    {t("login")}
                                 </NavLink>
                             </>
                         ) : (
@@ -200,7 +215,7 @@ export default function Navbar() {
                                 onClick={() => { handleNavLinkClick(); handleLogout(); }}
                                 className="w-full px-4 py-2 text-sm text-white bg-white/20 rounded-lg hover:bg-white/30 dark:bg-gray-700 dark:hover:bg-gray-600 transition text-left"
                             >
-                                Logout
+                                {t("logout")}
                             </button>
                         )}
                     </div>

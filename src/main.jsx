@@ -1,8 +1,10 @@
+import "./i18n/i18n";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
+import { ThemeProvider } from "./Context/ThemeContext";
 import AuthContextProvider from "./Context/AuthContext";
 import CounterProvider from "./Context/CounterContext";
 import { CartProvider } from "./Context/CartContext";
@@ -22,16 +24,18 @@ const queryClient = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <CounterProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <App />
-            </WishlistProvider>
-          </CartProvider>
-        </CounterProvider>
-      </QueryClientProvider>
-    </AuthContextProvider>
+    <ThemeProvider>
+      <AuthContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <CounterProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <App />
+              </WishlistProvider>
+            </CartProvider>
+          </CounterProvider>
+        </QueryClientProvider>
+      </AuthContextProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );

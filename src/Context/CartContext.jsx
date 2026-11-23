@@ -1,18 +1,42 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { AuthContext } from "./AuthContext";
 
 export const CartContext = createContext();
 
-export function CartProvider({ children }) {
-    // ✅ Load cart from localStorage on init
-    const [cartItems, setCartItems] = useState(() => {
-        const saved = localStorage.getItem("cartItems");
-        return saved ? JSON.parse(saved) : [];
-    });
+function readItems(key) {
+    try {
+        return JSON.parse(localStorage.getItem(key)) || [];
+    } catch {
+        return [];
+    }
+}
 
-    // ✅ Save cart to localStorage on change
+export function CartProvider({ children }) {
+    const { storageKey } = useContext(AuthContext);
+    const cartKey = storageKey("cart") || "cartItems";
+
+    // State carries the key its items belong to, so switching identity never
+    // writes one session's cart over another's
+    const [state, setState] = useState(() => ({ key: cartKey, items: readItems(cartKey) }));
+
+    // ✅ Load when the active identity's key changes
     useEffect(() => {
-        localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    }, [cartItems]);
+        if (state.key === cartKey) return;
+        setState({ key: cartKey, items: readItems(cartKey) });
+    }, [cartKey, state.key]);
+
+    // ✅ Save only items that belong to the current key
+    useEffect(() => {
+        if (state.key !== cartKey) return;
+        localStorage.setItem(cartKey, JSON.stringify(state.items));
+    }, [state, cartKey]);
+
+    const cartItems = state.items;
+    const setCartItems = (updater) =>
+        setState((prev) => ({
+            key: prev.key,
+            items: typeof updater === "function" ? updater(prev.items) : updater,
+        }));
 
     const addToCart = (product) => {
         setCartItems((prev) => {
@@ -69,4 +93,4 @@ export function CartProvider({ children }) {
     );
 }
 
-export const useCart = () => useContext(CartContext);   
+export const useCart = () => useContext(CartContext);

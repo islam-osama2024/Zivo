@@ -69,11 +69,17 @@ function FooterLinkList({ title, links, visible, delay = 0 }) {
         {title}
       </h3>
       <ul className="mt-6 space-y-3">
-        {links.map(({ key, to }) => (
+        {links.map(({ key, to, soon }) => (
           <li key={to}>
-            <Link to={to} className="hover:text-emerald-400 transition">
-              {t(key)}
-            </Link>
+            {soon ? (
+              <span className="text-gray-500 cursor-default" aria-disabled="true">
+                {t(key)} <span className="text-xs">({t("soon")})</span>
+              </span>
+            ) : (
+              <Link to={to} className="hover:text-emerald-400 transition">
+                {t(key)}
+              </Link>
+            )}
           </li>
         ))}
       </ul>
@@ -116,18 +122,19 @@ export default function Footer() {
     { key: "login", to: "/login" },
   ];
 
+  // These pages are not built yet: shown as "soon", not as dead links
   const companyLinks = [
-    { key: "about", to: "/about" },
-    { key: "features", to: "/features" },
-    { key: "works", to: "/works" },
-    { key: "career", to: "/career" },
+    { key: "about", to: "/about", soon: true },
+    { key: "features", to: "/features", soon: true },
+    { key: "works", to: "/works", soon: true },
+    { key: "career", to: "/career", soon: true },
   ];
 
   const helpLinks = [
-    { key: "customerSupport", to: "/support" },
-    { key: "deliveryDetails", to: "/delivery" },
-    { key: "termsConditions", to: "/terms" },
-    { key: "privacyPolicyLink", to: "/privacy" },
+    { key: "customerSupport", to: "/support", soon: true },
+    { key: "deliveryDetails", to: "/delivery", soon: true },
+    { key: "termsConditions", to: "/terms", soon: true },
+    { key: "privacyPolicyLink", to: "/privacy", soon: true },
   ];
 
   // ── Back to Top ───────────────────────────────────────────────
@@ -287,7 +294,7 @@ export default function Footer() {
 
           <hr className="mt-8 border-gray-700" />
           <p className="mt-6 text-center text-gray-400 text-sm">
-            © {new Date().getFullYear()} FRESH CART. {t("allRightsReserved")}.
+            © {new Date().getFullYear()} ZIVO. {t("allRightsReserved")}.
           </p>
         </div>
       </footer>

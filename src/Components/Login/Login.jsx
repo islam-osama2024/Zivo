@@ -79,13 +79,23 @@ export default function Login() {
             } else if (err?.code === "auth/account-exists-with-different-credential") {
                 try {
                     const email = err?.customData?.email;
-                    const methods = email && auth ? await fetchSignInMethodsForEmail(auth, email) : [];
                     let captured = false;
                     if (label === "GitHub" && email) {
                         const cred = GithubAuthProvider.credentialFromError(err);
                         if (cred) {
                             pendingGithub.current = { cred, email: email.toLowerCase() };
                             captured = true;
+                        }
+                    }
+                    // Provider evidence from Firebase's own error payload first:
+                    // email enumeration protection can make the methods lookup
+                    // return [], so fall back to it only when needed.
+                    let methods = err?.customData?._tokenResponse?.verifiedProvider || [];
+                    if (!methods.length && email && auth) {
+                        try {
+                            methods = await fetchSignInMethodsForEmail(auth, email);
+                        } catch (lookupErr) {
+                            methods = [];
                         }
                     }
                     if (methods.includes("google.com")) {

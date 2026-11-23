@@ -255,9 +255,9 @@ export default function Register() {
           {/* Terms */}
           <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-5">
             {t("termsAgreement")}{" "}
-            <span className="text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">{t("terms")}</span>
+            <span className="text-emerald-600 dark:text-emerald-400">{t("terms")}</span>
             {" "}{t("and")}{" "}
-            <span className="text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">{t("privacyPolicy")}</span>
+            <span className="text-emerald-600 dark:text-emerald-400">{t("privacyPolicy")}</span>
           </p>
         </div>
       </div>

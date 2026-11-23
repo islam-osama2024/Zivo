@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 
 // ← لوجو Zivo مباشرة بدل صورة
 const ZivoLogo = ({ white = false }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="110" height="34" viewBox="0 0 120 36">
+    <svg xmlns="http://www.w3.org/2000/svg" width="110" height="34" viewBox="0 0 120 36" style={{ direction: "ltr" }}>
         <circle cx="8" cy="18" r="7" fill={white ? "white" : "#10b981"} />
         <circle cx="8" cy="18" r="3.5" fill={white ? "#10b981" : "white"} />
         <text

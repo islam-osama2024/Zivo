@@ -18,3 +18,10 @@
   padding: 0 !important;
 }
 
+
+/* react-slick: [dir=rtl] on <html> makes .slick-slide float right, which
+   breaks the fade stack (active slide lands off-screen). The slider's wrapper
+   is pinned dir="ltr", so keep the slide flow LTR too. */
+.slick-slide {
+    float: left !important;
+}

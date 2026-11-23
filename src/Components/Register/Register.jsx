@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import { AuthContext } from "../../Context/AuthContext";
 
 // ← لوجو Zivo مباشرة بدل صورة
 const ZivoLogo = ({ white = false }) => (
@@ -40,6 +41,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   // ← نقلناهم جوه الكومبوننت عشان يستخدموا t() ويتحدثوا مع تغيير اللغة
   const fieldConfig = [
@@ -81,7 +83,7 @@ export default function Register() {
         const { data } = await axios.post("https://ecommerce.routemisr.com/api/v1/auth/signin", {
           email: values.email, password: values.password,
         });
-        localStorage.setItem("userToken", data.token);
+        login(data.token, values.email);
         setSuccessMessage(true);
         setTimeout(() => navigate("/products"), 1500);
       } catch (err) {

@@ -4,10 +4,15 @@ import { AuthContext } from "../../Context/AuthContext"; // ✅ مسار صحي�
 
 
 export default function ProtectedRoute({ children }) {
-    const { token } = useContext(AuthContext);
+    const { isAuthenticated, authPending } = useContext(AuthContext);
+
+    // لسه بنستنى جلسة Firebase تتحقق — منعرضش حاجة لحد ما تعرف
+    if (!isAuthenticated && authPending) {
+        return null;
+    }
 
     // لو المستخدم مش مسجل دخول، اعد توجيهه للـ login
-    if (!token) {
+    if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
     return children;

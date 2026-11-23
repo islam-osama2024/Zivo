@@ -25,3 +25,8 @@
 .slick-slide {
     float: left !important;
 }
+
+/* Footer developer credit typeface (matches Hero Chicken reference) */
+.font-ruqaa {
+    font-family: "Aref Ruqaa", "Segoe UI", Tahoma, sans-serif;
+}

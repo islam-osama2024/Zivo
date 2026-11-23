@@ -29,7 +29,7 @@ export default function Login() {
     const { t } = useTranslation();
     const [socialNotice, setSocialNotice] = useState("");
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+    const { login, socialSignIn } = useContext(AuthContext);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -37,6 +37,29 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [remember, setRemember] = useState(false);
+    const [socialLoading, setSocialLoading] = useState("");
+
+    // ✅ دخول اجتماعي حقيقي عبر Firebase — Apple لسه قريب
+    async function handleSocial(label) {
+        setSocialNotice("");
+        if (label === "Apple") {
+            setSocialNotice(t("socialLoginSoon"));
+            return;
+        }
+        setSocialLoading(label);
+        try {
+            await socialSignIn(label);
+            navigate("/products");
+        } catch (err) {
+            if (err?.code === "auth/not-configured") {
+                setSocialNotice(t("socialLoginSoon"));
+            } else if (err?.code !== "auth/popup-closed-by-user" && err?.code !== "auth/cancelled-popup-request") {
+                setSocialNotice(t("socialLoginFailed"));
+            }
+        } finally {
+            setSocialLoading("");
+        }
+    }
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -218,7 +241,8 @@ export default function Login() {
                                 key={label}
                                 type="button"
                                 aria-label={label}
-                                onClick={() => setSocialNotice(t("socialLoginSoon"))}
+                                onClick={() => handleSocial(label)}
+                                disabled={socialLoading !== ""}
                                 className={`${bg} h-11 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm`}
                             >
                                 {icon}

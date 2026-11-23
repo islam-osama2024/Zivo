@@ -8,14 +8,14 @@ import { FiMail, FiShoppingBag, FiHeart, FiLogOut, FiCamera, FiPackage } from "r
 
 export default function Profile() {
     const { t } = useTranslation();
-    const { userEmail, logout } = useContext(AuthContext);
+    const { activeEmail, displayName, storageKey, logout } = useContext(AuthContext);
     const { cartItems } = useCart();
     const { wishlistItems } = useWishlist();
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
     // ← صورة الأفاتار، محفوظة في localStorage مرتبطة بالإيميل
-    const avatarKey = userEmail ? `avatar_${userEmail.toLowerCase()}` : null;
+    const avatarKey = storageKey("avatar");
     const [avatar, setAvatar] = useState(() => {
         if (!avatarKey) return null;
         try {
@@ -26,7 +26,7 @@ export default function Profile() {
     });
 
     // ← الطلبات السابقة (من checkout)
-    const ordersKey = userEmail ? `orders_${userEmail.toLowerCase()}` : null;
+    const ordersKey = storageKey("orders");
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
@@ -67,7 +67,8 @@ export default function Profile() {
     }
 
     // ← أخذ أول حرفين من الإيميل عشان نعرضهم كـ Avatar افتراضي
-    const initials = userEmail ? userEmail.slice(0, 2).toUpperCase() : "?";
+    const nameSource = displayName || activeEmail;
+    const initials = nameSource ? nameSource.slice(0, 2).toUpperCase() : "?";
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4 transition-colors duration-300">
@@ -105,10 +106,10 @@ export default function Profile() {
                         />
                     </div>
 
-                    <h1 className="text-xl font-bold text-gray-800 dark:text-white">{userEmail || t("guest")}</h1>
+                    <h1 className="text-xl font-bold text-gray-800 dark:text-white">{displayName || activeEmail || t("guest")}</h1>
                     <p className="text-gray-400 dark:text-gray-500 text-sm mt-1 flex items-center justify-center gap-1.5">
                         <FiMail className="text-sm" />
-                        {userEmail || t("noEmailAvailable")}
+                        {activeEmail || t("noEmailAvailable")}
                     </p>
                 </div>
 
@@ -139,7 +140,7 @@ export default function Profile() {
                     <div className="space-y-3">
                         <div className="flex justify-between items-center py-2 border-b border-gray-50 dark:border-gray-700">
                             <span className="text-sm text-gray-500 dark:text-gray-400">{t("emailAddress")}</span>
-                            <span className="text-sm font-medium text-gray-800 dark:text-white">{userEmail || "—"}</span>
+                            <span className="text-sm font-medium text-gray-800 dark:text-white">{activeEmail || "—"}</span>
                         </div>
                         <div className="flex justify-between items-center py-2">
                             <span className="text-sm text-gray-500 dark:text-gray-400">{t("memberStatus")}</span>

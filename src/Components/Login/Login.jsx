@@ -27,6 +27,7 @@ const ZivoLogo = ({ white = false }) => (
 
 export default function Login() {
     const { t } = useTranslation();
+    const [socialNotice, setSocialNotice] = useState("");
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
 
@@ -180,9 +181,9 @@ export default function Login() {
                                 />
                                 {t("rememberMe")}
                             </label>
-                            <Link to="/forget-password" className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline font-medium">
-                                {t("forgotPassword")}
-                            </Link>
+                            <span className="text-sm text-gray-400 dark:text-gray-500" aria-disabled="true">
+                                {t("forgotPassword")} ({t("soon")})
+                            </span>
                         </div>
 
                         {/* Submit */}
@@ -217,19 +218,23 @@ export default function Login() {
                                 key={label}
                                 type="button"
                                 aria-label={label}
+                                onClick={() => setSocialNotice(t("socialLoginSoon"))}
                                 className={`${bg} h-11 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm`}
                             >
                                 {icon}
                             </button>
                         ))}
                     </div>
+                    {socialNotice && (
+                        <p className="text-center text-xs text-amber-500 mt-3">{socialNotice}</p>
+                    )}
 
                     {/* Terms */}
                     <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-6">
                         {t("signInTermsAgreement")}{" "}
-                        <span className="text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">{t("terms")}</span>
+                        <span className="text-emerald-600 dark:text-emerald-400">{t("terms")}</span>
                         {" "}{t("and")}{" "}
-                        <span className="text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">{t("privacyPolicy")}</span>
+                        <span className="text-emerald-600 dark:text-emerald-400">{t("privacyPolicy")}</span>
                     </p>
                 </div>
             </div>

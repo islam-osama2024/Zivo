@@ -13,6 +13,7 @@ const Checkout = () => {
     const [confirmedItems, setConfirmedItems] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [confirmedTotals, setConfirmedTotals] = useState(null);
     const [step, setStep] = useState(1);
 
     const [form, setForm] = useState({
@@ -77,6 +78,7 @@ const Checkout = () => {
             }
 
             setConfirmedItems([...cartItems]); // ← احفظهم قبل المسح
+            setConfirmedTotals({ subtotal, shipping, total }); // ← احفظ الإجمالي قبل المسح
             cartItems.forEach((i) => removeFromCart(i.id)); // ← امسح من الـ Context
             setSuccess(true);
         } catch {
@@ -150,15 +152,15 @@ const Checkout = () => {
                 <div className="border-t border-gray-100 pt-4 space-y-2 mb-6">
                     <div className="flex justify-between text-sm text-gray-500">
                         <span>{t("subtotal")}</span>
-                        <span>${confirmedItems.reduce((t, i) => t + i.price * (i.quantity || 1), 0).toFixed(2)}</span>
+                        <span>${(confirmedTotals?.subtotal ?? 0).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-gray-500">
                         <span>{t("shipping")}</span>
-                        <span className="text-green-600 font-medium">{shipping === 0 ? t("free") : `$${shipping}`}</span>
+                        <span className="text-green-600 font-medium">{confirmedTotals?.shipping === 0 ? t("free") : `$${confirmedTotals?.shipping ?? 0}`}</span>
                     </div>
                     <div className="flex justify-between font-bold text-gray-800 text-base pt-2 border-t border-gray-100">
                         <span>{t("totalPaid")}</span>
-                        <span className="text-green-600">${total.toFixed(2)}</span>
+                        <span className="text-green-600">${(confirmedTotals?.total ?? 0).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-gray-400 pt-1">
                         <span>{t("shippingTo")}</span>

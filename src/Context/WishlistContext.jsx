@@ -1,18 +1,41 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { AuthContext } from "./AuthContext";
 
 export const WishlistContext = createContext();
 
-export function WishlistProvider({ children }) {
-    // ✅ تحميل المفضلة من localStorage عند البداية
-    const [wishlistItems, setWishlistItems] = useState(() => {
-        const saved = localStorage.getItem("wishlistItems");
-        return saved ? JSON.parse(saved) : [];
-    });
+function readItems(key) {
+    try {
+        return JSON.parse(localStorage.getItem(key)) || [];
+    } catch {
+        return [];
+    }
+}
 
-    // ✅ حفظ أي تغيير في localStorage
+export function WishlistProvider({ children }) {
+    const { storageKey } = useContext(AuthContext);
+    const wishlistKey = storageKey("wishlist") || "wishlistItems";
+
+    // State carries the key its items belong to (same isolation as the cart)
+    const [state, setState] = useState(() => ({ key: wishlistKey, items: readItems(wishlistKey) }));
+
+    // ✅ تحميل المفضلة الخاصة بالهوية النشطة
     useEffect(() => {
-        localStorage.setItem("wishlistItems", JSON.stringify(wishlistItems));
-    }, [wishlistItems]);
+        if (state.key === wishlistKey) return;
+        setState({ key: wishlistKey, items: readItems(wishlistKey) });
+    }, [wishlistKey, state.key]);
+
+    // ✅ حفظ تحت مفتاح الهوية النشطة فقط
+    useEffect(() => {
+        if (state.key !== wishlistKey) return;
+        localStorage.setItem(wishlistKey, JSON.stringify(state.items));
+    }, [state, wishlistKey]);
+
+    const wishlistItems = state.items;
+    const setWishlistItems = (updater) =>
+        setState((prev) => ({
+            key: prev.key,
+            items: typeof updater === "function" ? updater(prev.items) : updater,
+        }));
 
     const addToWishlist = (product) => {
         setWishlistItems((prev) => {

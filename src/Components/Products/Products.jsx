@@ -120,7 +120,7 @@ export default function ProductsPage() {
       <Toaster position="top-right" reverseOrder={false} />
 
       {/* Slider */}
-      <div className="w-screen m-0 p-0">
+      <div className="w-full m-0 p-0">
         <div className="grid grid-cols-12 gap-0">
           <div className="col-span-12 lg:col-span-9 h-[36rem]">
             <SimpleSlider />

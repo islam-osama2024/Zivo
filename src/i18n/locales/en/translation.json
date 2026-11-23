@@ -109,6 +109,7 @@
   "subscribe": "Subscribe",
   "securePaymentMethods": "Demo payments only, no real charges",
   "allRightsReserved": "All Rights Reserved",
+  "footerCredit": "Designed & developed by",
   "errorEnterEmail": "Please enter your email.",
   "errorInvalidEmailFooter": "Invalid email address.",
   "errorAlreadySubscribed": "This email is already subscribed.",

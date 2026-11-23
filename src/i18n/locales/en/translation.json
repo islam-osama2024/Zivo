@@ -219,5 +219,6 @@
   "demoPaymentTitle": "Demo payment",
   "demoPaymentNotice": "This is a demo store. No real payment is processed, and no card details are needed or collected. Your order is saved only in this browser.",
   "placeDemoOrder": "Place demo order · ${{amount}}",
-  "socialLoginSoon": "Social sign-in is coming soon in this demo."
+  "socialLoginSoon": "Social sign-in is coming soon in this demo.",
+  "socialLoginFailed": "Couldn't sign in with that account. Please try again."
 }

@@ -109,6 +109,7 @@
   "subscribe": "اشترك",
   "securePaymentMethods": "الدفع تجريبي فقط، مفيش خصم حقيقي",
   "allRightsReserved": "جميع الحقوق محفوظة",
+  "footerCredit": "تصميم وتطوير",
   "errorEnterEmail": "من فضلك أدخل بريدك الإلكتروني.",
   "errorInvalidEmailFooter": "البريد الإلكتروني غير صحيح.",
   "errorAlreadySubscribed": "هذا البريد الإلكتروني مشترك بالفعل.",

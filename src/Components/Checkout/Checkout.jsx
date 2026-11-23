@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../Context/CartContext.jsx"; // ← اضفنا ده
 import { useContext } from "react";
@@ -18,15 +17,11 @@ const Checkout = () => {
 
     const [form, setForm] = useState({
         fullName: "", email: "", address: "", city: "", country: "",
-        cardNumber: "", expiry: "", cvc: "",
     });
     const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
-        let { name, value } = e.target;
-        if (name === "cardNumber") value = value.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
-        if (name === "expiry") value = value.replace(/\D/g, "").slice(0, 4).replace(/^(\d{2})(\d)/, "$1/$2");
-        if (name === "cvc") value = value.replace(/\D/g, "").slice(0, 3);
+        const { name, value } = e.target;
         setForm({ ...form, [name]: value });
         setErrors({ ...errors, [name]: "" });
     };
@@ -38,9 +33,6 @@ const Checkout = () => {
         if (fields.includes("address") && !form.address.trim()) e.address = t("errorRequired2");
         if (fields.includes("city") && !form.city.trim()) e.city = t("errorRequired2");
         if (fields.includes("country") && !form.country.trim()) e.country = t("errorRequired2");
-        if (fields.includes("cardNumber") && form.cardNumber.replace(/\s/g, "").length < 16) e.cardNumber = t("errorInvalidCardNumber");
-        if (fields.includes("expiry") && form.expiry.length < 5) e.expiry = t("errorInvalidExpiry");
-        if (fields.includes("cvc") && form.cvc.length < 3) e.cvc = t("errorInvalidCvc");
         return e;
     };
 
@@ -59,13 +51,12 @@ const Checkout = () => {
     const total = subtotal + shipping;
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const e2 = validate(["cardNumber", "expiry", "cvc"]);
-        if (Object.keys(e2).length > 0) { setErrors(e2); return; }
+        e?.preventDefault();
         if (cartItems.length === 0) return;
         setSubmitting(true);
         try {
-            await axios.post("https://jsonplaceholder.typicode.com/posts", { ...form, cartItems, total });
+            // Demo store: no real payment is processed and nothing leaves the browser.
+            await new Promise((r) => setTimeout(r, 800));
 
             // ← حفظ الطلب في localStorage لصفحة Profile
             if (userEmail) {
@@ -269,71 +260,27 @@ const Checkout = () => {
                                     </h2>
                                 </div>
 
-                                {/* Card Preview */}
-                                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-5 mb-6 text-white relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-                                    <div className="absolute bottom-0 left-0 w-28 h-28 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="text-xs text-gray-400 tracking-widest">{t("creditCard")}</div>
-                                        <div className="flex">
-                                            <div className="w-7 h-7 bg-red-500 rounded-full opacity-80" />
-                                            <div className="w-7 h-7 bg-yellow-400 rounded-full opacity-80 -ml-3" />
-                                        </div>
-                                    </div>
-                                    <div className="font-mono text-lg tracking-widest mb-4 text-white/90 min-h-[28px]">
-                                        {form.cardNumber || "•••• •••• •••• ••••"}
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <div>
-                                            <p className="text-gray-400 text-[10px] mb-0.5">{t("cardHolder")}</p>
-                                            <p className="font-medium">{form.fullName || "Your Name"}</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-gray-400 text-[10px] mb-0.5">{t("expires")}</p>
-                                            <p className="font-medium">{form.expiry || "MM/YY"}</p>
-                                        </div>
+                                {/* Demo payment notice: no card data is asked for or sent anywhere */}
+                                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6 flex gap-3">
+                                    <span className="text-2xl flex-shrink-0">🧪</span>
+                                    <div>
+                                        <p className="font-semibold text-amber-800 text-sm mb-1">{t("demoPaymentTitle")}</p>
+                                        <p className="text-amber-700 text-xs leading-relaxed">{t("demoPaymentNotice")}</p>
                                     </div>
                                 </div>
 
-                                <form onSubmit={handleSubmit} className="space-y-4">
-                                    <div>
-                                        <label className="text-xs font-medium text-gray-500 mb-1 block">{t("cardNumber")}</label>
-                                        <input name="cardNumber" value={form.cardNumber} onChange={handleChange} placeholder="1234 5678 9012 3456"
-                                            className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-400 transition ${errors.cardNumber ? "border-red-400 bg-red-50" : "border-gray-200"}`} />
-                                        {errors.cardNumber && <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="text-xs font-medium text-gray-500 mb-1 block">{t("expiry")}</label>
-                                            <input name="expiry" value={form.expiry} onChange={handleChange} placeholder="MM/YY"
-                                                className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-400 transition ${errors.expiry ? "border-red-400 bg-red-50" : "border-gray-200"}`} />
-                                            {errors.expiry && <p className="text-red-500 text-xs mt-1">{errors.expiry}</p>}
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-medium text-gray-500 mb-1 block">{t("cvc")}</label>
-                                            <input name="cvc" value={form.cvc} onChange={handleChange} placeholder="•••" type="password"
-                                                className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-400 transition ${errors.cvc ? "border-red-400 bg-red-50" : "border-gray-200"}`} />
-                                            {errors.cvc && <p className="text-red-500 text-xs mt-1">{errors.cvc}</p>}
-                                        </div>
-                                    </div>
+                                {errors.submit && (
+                                    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-500 text-sm mb-4">⚠️ {errors.submit}</div>
+                                )}
 
-                                    {errors.submit && (
-                                        <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-500 text-sm">⚠️ {errors.submit}</div>
-                                    )}
-
-                                    <div className="flex items-center gap-2 text-gray-400 text-xs">
-                                        <span>🔒</span><span>{t("paymentSecureNote")}</span>
-                                    </div>
-
-                                    <button type="submit" disabled={submitting || cartItems.length === 0}
-                                        className={`w-full py-3 rounded-full font-medium text-white transition flex items-center justify-center gap-2 ${submitting || cartItems.length === 0 ? "bg-gray-300 cursor-not-allowed" : "bg-green-500 hover:bg-green-600 shadow-md"
-                                            }`}>
-                                        {submitting
-                                            ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{t("processing")}</>
-                                            : <>{t("payBtn", { amount: total.toFixed(2) })}</>
-                                        }
-                                    </button>
-                                </form>
+                                <button onClick={handleSubmit} disabled={submitting || cartItems.length === 0}
+                                    className={`w-full py-3 rounded-full font-medium text-white transition flex items-center justify-center gap-2 ${submitting || cartItems.length === 0 ? "bg-gray-300 cursor-not-allowed" : "bg-green-500 hover:bg-green-600 shadow-md"
+                                        }`}>
+                                    {submitting
+                                        ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />{t("processing")}</>
+                                        : <>{t("placeDemoOrder", { amount: total.toFixed(2) })}</>
+                                    }
+                                </button>
                             </div>
                         )}
                     </div>

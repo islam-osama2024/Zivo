@@ -1,18 +1,11 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
-    const [token, setToken] = useState(null);
-    const [userEmail, setUserEmail] = useState(null);
-
-    // ✅ عند أول تحميل أو Refresh
-    useEffect(() => {
-        const savedToken = localStorage.getItem("tkn");
-        const savedEmail = localStorage.getItem("user_email");
-        if (savedToken) setToken(savedToken);
-        if (savedEmail) setUserEmail(savedEmail);
-    }, []);
+    // ✅ Hydrate synchronously so ProtectedRoute never sees a false "logged out" on refresh
+    const [token, setToken] = useState(() => localStorage.getItem("tkn"));
+    const [userEmail, setUserEmail] = useState(() => localStorage.getItem("user_email"));
 
     // ✅ Login — ابعت الإيميل معاه
     function login(userToken, email) {

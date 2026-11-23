@@ -58,7 +58,6 @@ function NextArrow({ onClick }) {
 
 export default function SimpleSlider() {
     const [current, setCurrent] = useState(0);
-
     const settings = {
         dots: false,
         infinite: true,
@@ -80,7 +79,7 @@ export default function SimpleSlider() {
     };
 
     return (
-        <div className="relative w-full h-full overflow-hidden">
+        <div className="relative w-full h-full overflow-hidden" dir="ltr">
             <Slider {...settings}>
                 {slides.map((slide, index) => (
                     <div key={index} className="relative w-full h-[36rem] outline-none">

@@ -14,7 +14,10 @@ import image2 from "../../assets/image/ele.avif";
 const fetchProducts = async ({ queryKey }) => {
   const [_key, { category, search, skip, limit, brand }] = queryKey; // ← أضفنا brand
   let url = "";
-  if (search?.trim()) {
+  if (brand) {
+    // Brand filter comes from the Brands page: fetch the full catalog, filter client-side below
+    url = `https://dummyjson.com/products?limit=0`;
+  } else if (search?.trim()) {
     url = `https://dummyjson.com/products/search?q=${encodeURIComponent(search)}&limit=${limit}&skip=${skip}`;
   } else if (category && category !== "all") {
     url = `https://dummyjson.com/products/category/${category}?limit=${limit}&skip=${skip}`;

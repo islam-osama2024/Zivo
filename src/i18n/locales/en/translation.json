@@ -221,5 +221,8 @@
   "demoPaymentNotice": "This is a demo store. No real payment is processed, and no card details are needed or collected. Your order is saved only in this browser.",
   "placeDemoOrder": "Place demo order · ${{amount}}",
   "socialLoginSoon": "Social sign-in is coming soon in this demo.",
-  "socialLoginFailed": "Couldn't sign in with that account. Please try again."
+  "socialLoginFailed": "Couldn't sign in with that account. Please try again.",
+  "socialAccountExistsGoogle": "This email already has an account with Google. Continue with Google instead.",
+  "socialAccountExistsGoogleLink": "This email already has an account with Google. Sign in with Google to link your GitHub, then either method works.",
+  "socialAccountExistsGeneric": "This email already has an account with another sign-in method. Please use that method to continue."
 }

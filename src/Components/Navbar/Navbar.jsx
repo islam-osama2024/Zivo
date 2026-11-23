@@ -7,7 +7,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import { CartContext } from "../../Context/CartContext";
 // ← اللوجو مباشرة كـ component بدل صورة
 const ZivoLogo = ({ white = false }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="32" viewBox="0 0 120 36">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="32" viewBox="0 0 120 36" style={{ direction: "ltr" }}>
         <circle cx="8" cy="18" r="7" fill={white ? "white" : "#10b981"} />
         <circle cx="8" cy="18" r="3.5" fill={white ? "#10b981" : "white"} />
         <text

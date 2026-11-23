@@ -36,7 +36,7 @@ export default function Navbar() {
         () => localStorage.getItem("theme") === "dark"
     );
 
-    const { token, logout } = useContext(AuthContext);
+    const { isAuthenticated, logout } = useContext(AuthContext);
     const { cartItems } = useContext(CartContext);
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
@@ -64,7 +64,7 @@ export default function Navbar() {
                     </Link>
 
                     {/* روابط Desktop */}
-                    {token && (
+                    {isAuthenticated && (
                         <ul className="hidden md:flex items-center gap-1">
                             {navLinks.map(({ key, to }) => (
                                 <li key={to}>
@@ -106,7 +106,7 @@ export default function Navbar() {
                         </button>
 
                         {/* Cart */}
-                        {token && (
+                        {isAuthenticated && (
                             <Link
                                 to="/cart"
                                 className="relative w-9 h-9 flex items-center justify-center rounded-full bg-white/20 dark:bg-gray-700 text-white hover:bg-white/30 dark:hover:bg-gray-600 hover:scale-110 transition-all duration-200"
@@ -121,7 +121,7 @@ export default function Navbar() {
                             </Link>
                         )}
                         {/* Profile */}
-                        {token && (
+                        {isAuthenticated && (
                             <Link
                                 to="/profile"
                                 className="w-9 h-9 flex items-center justify-center rounded-full bg-white/20 dark:bg-gray-700 text-white hover:bg-white/30 dark:hover:bg-gray-600 hover:scale-110 transition-all duration-200"
@@ -133,7 +133,7 @@ export default function Navbar() {
 
                         {/* Auth Desktop */}
                         <div className="hidden md:flex items-center gap-2">
-                            {!token ? (
+                            {!isAuthenticated ? (
                                 <>
                                     <NavLink
                                         to="/register"
@@ -171,7 +171,7 @@ export default function Navbar() {
 
                 {/* Mobile Menu */}
                 <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-96 pb-4" : "max-h-0"}`}>
-                    {token && (
+                    {isAuthenticated && (
                         <ul className="flex flex-col gap-1 pt-2">
                             {navLinks.map(({ key, to }) => (
                                 <li key={to}>
@@ -193,7 +193,7 @@ export default function Navbar() {
                     )}
 
                     <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-white/20 dark:border-gray-700">
-                        {!token ? (
+                        {!isAuthenticated ? (
                             <>
                                 <NavLink
                                     to="/register"

@@ -19,4 +19,12 @@ i18n
     },
 });
 
+function applyDocumentDirection(lng) {
+    const lang = (lng || "en").split("-")[0];
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+}
+applyDocumentDirection(i18n.language);
+i18n.on("languageChanged", applyDocumentDirection);
+
 export default i18n;

@@ -224,5 +224,6 @@
   "socialLoginFailed": "Couldn't sign in with that account. Please try again.",
   "socialAccountExistsGoogle": "This email already has an account with Google. Continue with Google instead.",
   "socialAccountExistsGoogleLink": "This email already has an account with Google. Sign in with Google to link your GitHub, then either method works.",
-  "socialAccountExistsGeneric": "This email already has an account with another sign-in method. Please use that method to continue."
+  "socialAccountExistsGeneric": "This email already has an account with another sign-in method. Please use that method to continue.",
+  "socialLinkWrongAccount": "You signed in with a different account, so GitHub was not linked. Use the Google account with this email to link it."
 }

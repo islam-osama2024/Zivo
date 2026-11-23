@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
@@ -6,7 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF, FaGithub, FaApple } from "react-icons/fa";
 import { FiEye, FiEyeOff, FiMail, FiLock } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
-import { fetchSignInMethodsForEmail } from "firebase/auth";
+import { fetchSignInMethodsForEmail, GithubAuthProvider, linkWithCredential } from "firebase/auth";
 import { auth } from "../../firebase";
 
 // ← لوجو Zivo مباشرة بدل صورة
@@ -40,6 +40,9 @@ export default function Login() {
     const [errorMessage, setErrorMessage] = useState(null);
     const [remember, setRemember] = useState(false);
     const [socialLoading, setSocialLoading] = useState("");
+    // Pending GitHub link request captured from an account-exists error.
+    // Memory only: never stored, logged, or put in a URL.
+    const pendingGithub = useRef(null);
 
     // ✅ دخول اجتماعي حقيقي عبر Firebase — Apple لسه قريب
     async function handleSocial(label) {
@@ -50,8 +53,26 @@ export default function Login() {
         }
         setSocialLoading(label);
         try {
-            await socialSignIn(label);
-            navigate("/products");
+            const user = await socialSignIn(label);
+            // Explicit link: runs only after the user saw the account-exists
+            // message and chose to sign in with the existing provider. The
+            // signed-in email must match the collided email exactly, so a
+            // different Google account is never linked. No email-only merge.
+            if (pendingGithub.current && user) {
+                if (user.email && user.email.toLowerCase() === pendingGithub.current.email) {
+                    try {
+                        await linkWithCredential(user, pendingGithub.current.cred);
+                    } catch (linkErr) {
+                        // already linked / credential in use: sign-in itself succeeded
+                    }
+                    pendingGithub.current = null;
+                    navigate("/products");
+                } else {
+                    setSocialNotice(t("socialLinkWrongAccount"));
+                }
+            } else {
+                navigate("/products");
+            }
         } catch (err) {
             if (err?.code === "auth/not-configured") {
                 setSocialNotice(t("socialLoginSoon"));
@@ -59,7 +80,19 @@ export default function Login() {
                 try {
                     const email = err?.customData?.email;
                     const methods = email && auth ? await fetchSignInMethodsForEmail(auth, email) : [];
-                    setSocialNotice(methods.includes("google.com") ? t("socialAccountExistsGoogle") : t("socialAccountExistsGeneric"));
+                    let captured = false;
+                    if (label === "GitHub" && email) {
+                        const cred = GithubAuthProvider.credentialFromError(err);
+                        if (cred) {
+                            pendingGithub.current = { cred, email: email.toLowerCase() };
+                            captured = true;
+                        }
+                    }
+                    if (methods.includes("google.com")) {
+                        setSocialNotice(captured ? t("socialAccountExistsGoogleLink") : t("socialAccountExistsGoogle"));
+                    } else {
+                        setSocialNotice(t("socialAccountExistsGeneric"));
+                    }
                 } catch {
                     setSocialNotice(t("socialAccountExistsGeneric"));
                 }

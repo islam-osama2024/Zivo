@@ -176,7 +176,7 @@ export default function Footer() {
       <button
         onClick={scrollToTop}
         aria-label="Back to top"
-        className={`fixed bottom-8 right-8 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 hover:scale-110 transition-all duration-300 ${showTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"
+        className={`fixed bottom-8 end-8 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 hover:scale-110 transition-all duration-300 ${showTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"
           }`}
       >
         <FiArrowUp className="text-xl" />
@@ -184,7 +184,7 @@ export default function Footer() {
 
       <footer
         ref={footerRef}
-        className="bg-gradient-to-tr from-gray-900 via-gray-800 to-gray-900 py-12 sm:py-16 lg:py-24 text-gray-100"
+        className="bg-gradient-to-tr from-gray-900 via-gray-800 to-gray-900 pt-12 pb-28 sm:pt-16 sm:pb-28 lg:py-24 text-gray-100"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-12">
@@ -202,7 +202,7 @@ export default function Footer() {
               <p className="mt-4 text-gray-300 leading-relaxed">
                 {t("footerDescription")}
               </p>
-              <div className="flex items-center mt-6 space-x-3">
+              <div className="flex items-center mt-6 gap-3">
                 {socials.map(({ label, icon: Icon, href, className, rotate }) => (
                   <a
                     key={label}
@@ -295,6 +295,12 @@ export default function Footer() {
           <hr className="mt-8 border-gray-700" />
           <p className="mt-6 text-center text-gray-400 text-sm">
             © {new Date().getFullYear()} ZIVO. {t("allRightsReserved")}.
+          </p>
+          <p className="mt-2 text-center text-gray-400 text-sm">
+            {t("footerCredit")}:{" "}
+            <strong className="font-ruqaa text-emerald-400 text-lg tracking-wide">
+              أبو إلياس | Abu Elias
+            </strong>
           </p>
         </div>
       </footer>

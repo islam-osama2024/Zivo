@@ -9,7 +9,7 @@ const Checkout = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { cartItems, removeFromCart, increaseQty, decreaseQty } = useCart(); // ← من الـ Context
-    const { userEmail } = useContext(AuthContext);
+    const { isAuthenticated, storageKey } = useContext(AuthContext);
     const [confirmedItems, setConfirmedItems] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -60,8 +60,8 @@ const Checkout = () => {
             await new Promise((r) => setTimeout(r, 800));
 
             // ← حفظ الطلب في localStorage لصفحة Profile
-            if (userEmail) {
-                const ordersKey = `orders_${userEmail.toLowerCase()}`;
+            if (isAuthenticated) {
+                const ordersKey = storageKey("orders");
                 try {
                     const saved = localStorage.getItem(ordersKey);
                     const existingOrders = saved ? JSON.parse(saved) : [];

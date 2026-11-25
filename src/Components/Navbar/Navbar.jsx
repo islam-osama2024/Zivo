@@ -1,10 +1,11 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { AuthContext } from "../../Context/AuthContext";
 import { CartContext } from "../../Context/CartContext";
+import { useTheme } from "../../Context/ThemeContext";
 // ← اللوجو مباشرة كـ component بدل صورة
 const ZivoLogo = ({ white = false }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="62" height="30" viewBox="0 0 75 36" style={{ direction: "ltr" }}>
@@ -32,9 +33,7 @@ const navLinks = [
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem("theme") === "dark"
-    );
+    const { darkMode, toggleDarkMode } = useTheme();
 
     const { isAuthenticated, logout } = useContext(AuthContext);
     const { cartItems } = useContext(CartContext);
@@ -45,10 +44,6 @@ export default function Navbar() {
         i18n.changeLanguage(lng);
     }
 
-    useEffect(() => {
-        document.documentElement.classList.toggle("dark", darkMode);
-        localStorage.setItem("theme", darkMode ? "dark" : "light");
-    }, [darkMode]);
 
     function handleLogout() { logout(); navigate("/login"); }
     function handleNavLinkClick() { setMenuOpen(false); }
@@ -98,7 +93,7 @@ export default function Navbar() {
 
                         {/* Dark / Light toggle */}
                         <button
-                            onClick={() => setDarkMode((d) => !d)}
+                            onClick={toggleDarkMode}
                             aria-label="Toggle dark/light mode"
                             className="w-9 h-9 flex items-center justify-center rounded-full bg-white/20 dark:bg-gray-700 text-white dark:text-yellow-300 hover:bg-white/30 dark:hover:bg-gray-600 hover:scale-110 transition-all duration-200"
                         >
@@ -224,3 +219,4 @@ export default function Navbar() {
         </nav>
     );
 }
+
